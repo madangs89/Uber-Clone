@@ -4,6 +4,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { connectDB } from "./utils/db/connectDb.js";
+import userRoutes from "./routes/user.routes.js";
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -16,7 +17,8 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
+app.use("/api/users", userRoutes);
 app.listen(PORT, async () => {
-    await connectDB();
+  await connectDB();
   console.log(`Server is running on port ${PORT}`);
 });
