@@ -1,24 +1,6 @@
 import { checkSchema } from "express-validator";
 
-export const registerSchema = checkSchema({
-  fullName: {
-    firstName: {
-      in: ["body"],
-      isString: true,
-      isLength: {
-        options: { min: 3 },
-      },
-      errorMessage: "First name must be at least 3 characters long",
-    },
-    lastName: {
-      in: ["body"],
-      isString: true,
-      isLength: {
-        options: { min: 3 },
-      },
-      errorMessage: "Last name must be at least 3 characters long",
-    },
-  },
+export const loginSchema = checkSchema({
   email: {
     in: ["body"],
     isEmail: true,
@@ -34,7 +16,21 @@ export const registerSchema = checkSchema({
   },
 });
 
-export const loginSchema = checkSchema({
+
+export const registerSchema = checkSchema({
+  "fullName.firstName": {
+    in: ["body"],
+    isString: true,
+    isLength: {
+      options: { min: 3 },
+    },
+    errorMessage: "First name must be at least 3 characters long",
+  },
+  "fullName.lastName": {
+    in: ["body"],
+    isString: true,
+    errorMessage: "Last name must be at least 3 characters long",
+  },
   email: {
     in: ["body"],
     isEmail: true,

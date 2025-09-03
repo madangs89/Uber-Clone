@@ -18,5 +18,5 @@ app.get("/", (req, res) => {
 app.use("/api/users", userRoutes);
 app.listen(PORT, async () => {
   await connectDB();
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port http://localhost:${PORT}`);
 });

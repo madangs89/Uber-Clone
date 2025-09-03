@@ -10,9 +10,15 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ errors: errors.array(), success: false });
     }
     const data = matchedData(req);
-
     const { fullName, email, password } = data;
     const hashedPassword = await bcrypt.hash(password, 10);
+    const alreadyExistingUser = await User.findOne({ email });
+    if (alreadyExistingUser) {
+      return res.status(409).json({
+        message: "User with this email already exists",
+        success: false,
+      });
+    }
     const user = await User.create({
       fullName,
       email,
