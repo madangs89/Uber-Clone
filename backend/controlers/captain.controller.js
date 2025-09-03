@@ -73,7 +73,6 @@ export const captainLogin = async (req, res) => {
         .status(401)
         .json({ message: "Invalid credentials", success: false });
     }
-
     const token = jwt.sign(
       { email: captain.email, _id: captain._id, fullName: captain.fullName },
       process.env.JWT_SECRET,
@@ -81,7 +80,6 @@ export const captainLogin = async (req, res) => {
         expiresIn: "7d",
       }
     );
-
     return res.status(200).cookie("token", token).json({
       message: "Captain logged in successfully",
       success: true,
