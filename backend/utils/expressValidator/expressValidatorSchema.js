@@ -16,7 +16,6 @@ export const loginSchema = checkSchema({
   },
 });
 
-
 export const registerSchema = checkSchema({
   "fullName.firstName": {
     in: ["body"],
@@ -43,5 +42,79 @@ export const registerSchema = checkSchema({
       options: { min: 4 },
     },
     errorMessage: "Password must be at least 4 characters long",
+  },
+});
+
+export const captainLog = checkSchema({
+  email: {
+    isEmail: true,
+    in: ["body"],
+    errorMessage: "Invalid email",
+  },
+  password: {
+    isString: true,
+    isLength: {
+      options: { min: 4 },
+    },
+    in: ["body"],
+    errorMessage: "Invalid password",
+  },
+});
+
+export const captainReg = checkSchema({
+  email: {
+    isEmail: true,
+    in: ["body"],
+    errorMessage: "Invalid email",
+  },
+  password: {
+    isString: true,
+    isLength: {
+      options: { min: 4 },
+    },
+    in: ["body"],
+    errorMessage: "Invalid password",
+  },
+  "fullName.firstName": {
+    isString: true,
+    isLength: {
+      options: { min: 3 },
+    },
+    in: ["body"],
+    errorMessage: "Invalid first name",
+  },
+  "fullName.lastName": {
+    isString: true,
+    in: ["body"],
+    errorMessage: "Invalid last name",
+  },
+  "vehicle.color": {
+    isString: true,
+    in: ["body"],
+    isLength: {
+      options: { min: 2 },
+    },
+    errorMessage: "Invalid vehicle type",
+  },
+  "vehicle.plate": {
+    isString: true,
+    in: ["body"],
+    isLength: {
+      options: { min: 2 },
+    },
+    errorMessage: "Invalid vehicle number plate",
+  },
+  "vehicle.type": {
+    isString: true,
+    in: ["body"],
+    isLength: {
+      options: { min: 2 },
+    },
+    errorMessage: "Invalid vehicle model",
+  },
+  "vehicle.capacity": {
+    isInt: true,
+    in: ["body"],
+    errorMessage: "Invalid vehicle capacity",
   },
 });
