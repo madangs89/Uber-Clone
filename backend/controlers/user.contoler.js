@@ -2,6 +2,7 @@ import { validationResult, matchedData } from "express-validator";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import User from "../models/user.model.js";
+import Blacklist from "../models/block.model.js";
 
 export const registerUser = async (req, res) => {
   try {
@@ -100,7 +101,10 @@ export const loginUser = async (req, res) => {
 };
 export const logoutUser = async (req, res) => {
   try {
+    const token =
+      req.cookies.token || req?.header?.authorization?.split(" ")[1];
     res.clearCookie("token");
+    await Blacklist.create({ token });
     return res.status(200).json({ message: "User logged out successfully" });
   } catch (error) {
     console.log("Error occurred while logging out user:", error);
