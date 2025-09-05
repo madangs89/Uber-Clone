@@ -67,6 +67,7 @@ const FinishRide = ({ setfinishRidePanel }) => {
           >
             Finish Ride
           </button>
+          <p>click on finish ride if you have completed the ride</p>
         </div>
       </div>
     </div>
