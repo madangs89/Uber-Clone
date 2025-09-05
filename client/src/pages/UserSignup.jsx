@@ -1,19 +1,56 @@
+import axios from "axios";
 import React from "react";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { UserDataContext } from "../context/userContext";
+import { useContext } from "react";
+import LoadingTailwind from "../components/LoadingTailwind";
 const UserSignup = () => {
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const submitHandler = (e) => {
+  const [loading, setLoading] = React.useState(false);
+  const { user, setUser } = useContext(UserDataContext);
+  const navigate = useNavigate();
+  const submitHandler = async (e) => {
     e.preventDefault();
-    console.log("Form submitted ✅");
-    console.log("First Name:", firstName);
-    console.log("Last Name:", lastName);
-    console.log("Email:", email);
-    console.log("Password:", password);
-    console.log(firstName, lastName, email, password);
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/register`,
+        {
+          fullName: {
+            firstName,
+            lastName,
+          },
+          email,
+          password,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      if (response?.data?.success) {
+        setFirstName("");
+        setLastName("");
+        setEmail("");
+        setPassword("");
+        setUser((prev) => {
+          return {
+            ...prev,
+            email: response.data.data.email,
+            fullName: response.data.data.fullName,
+          };
+        });
+        localStorage.setItem("token", response.data.data.token);
+        navigate("/home");
+      }
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
   };
   return (
     <div>
@@ -87,9 +124,9 @@ const UserSignup = () => {
 
             <button
               type="submit"
-              className="bg-[#111] text-white font-semibold mb-3 rounded-lg px-4 py-2 w-full text-lg placeholder:text-base"
+              className="bg-[#111] text-white flex items-center justify-center font-semibold mb-3 rounded-lg px-4 py-2 w-full text-lg placeholder:text-base"
             >
-              Create account
+              {loading ? <LoadingTailwind /> : "Create account"}
             </button>
           </form>
           <p className="text-center">

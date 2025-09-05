@@ -37,12 +37,19 @@ export const captainRegister = async (req, res) => {
       }
     );
 
-    return res.status(201).cookie("token", token).json({
-      message: "Captain registered successfully",
-      success: true,
-      token,
-      captain,
-    });
+    return res
+      .status(201)
+      .cookie("token", token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+      })
+      .json({
+        message: "Captain registered successfully",
+        success: true,
+        token,
+        captain,
+      });
   } catch (error) {
     return res
       .status(500)
@@ -80,19 +87,25 @@ export const captainLogin = async (req, res) => {
         expiresIn: "7d",
       }
     );
-    return res.status(200).cookie("token", token).json({
-      message: "Captain logged in successfully",
-      success: true,
-      token,
-      captain,
-    });
+    return res
+      .status(200)
+      .cookie("token", token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+      })
+      .json({
+        message: "Captain logged in successfully",
+        success: true,
+        token,
+        captain,
+      });
   } catch (error) {
     return res
       .status(500)
       .json({ message: "Internal Server Error", success: false });
   }
 };
-
 export const captainLogout = async (req, res) => {
   try {
     const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
@@ -107,7 +120,6 @@ export const captainLogout = async (req, res) => {
       .json({ message: "Internal Server Error", success: false });
   }
 };
-
 export const captainProfile = async (req, res) => {
   try {
     const user = req.captain;
@@ -117,9 +129,12 @@ export const captainProfile = async (req, res) => {
         .status(404)
         .json({ message: "Captain not found", success: false });
     }
-    return res
-      .status(200)
-      .json({ message: "Captain profile fetched", success: true, data });
+    return res.status(200).json({
+      message: "Captain profile fetched",
+      success: true,
+      data,
+      role: "captain",
+    });
   } catch (error) {
     return res
       .status(500)

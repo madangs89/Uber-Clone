@@ -1,15 +1,49 @@
+import axios from "axios";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { UserDataContext } from "../context/userContext";
+import LoadingTailwind from "../components/LoadingTailwind";
 
 const UserLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const submitHandler = (e) => {
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { user, setUser } = useContext(UserDataContext);
+  const submitHandler = async (e) => {
     e.preventDefault();
-    console.log("Form submitted ✅");
-    console.log("Email:", email);
-    console.log("Password:", password);
-    console.log(email, password);
+    setLoading(true);
+    try {
+      const data = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/login`,
+        {
+          email,
+          password,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(data.data);
+      console.log(data.status);
+
+      if (data?.data?.success) {
+        setUser((prev) => {
+          return {
+            ...prev,
+            email: data.data.data.email,
+            fullName: data.data.data.fullName,
+          };
+        });
+        localStorage.setItem("token", data.data.data.token);
+        setLoading(false);
+        navigate("/home");
+      }
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
   };
   return (
     <div className="p-7 h-screen flex flex-col justify-between">
@@ -47,7 +81,7 @@ const UserLogin = () => {
             type="submit"
             className="bg-[#111] text-white font-semibold mb-3 rounded-lg px-4 py-2 w-full text-lg placeholder:text-base"
           >
-            Login
+            {loading ? <LoadingTailwind /> : "Login"}
           </button>
         </form>
         <p className="text-center">

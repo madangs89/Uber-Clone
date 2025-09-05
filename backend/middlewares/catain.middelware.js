@@ -3,7 +3,8 @@ import Blacklist from "../models/block.model.js";
 export const captainMiddleware = async (req, res, next) => {
   try {
     const token =
-      req.cookies.token || req?.header?.authorization?.split(" ")[1];
+      req?.cookies?.token ||
+      (req.headers.authorization && req.headers.authorization.split(" ")[1]);
     if (!token) {
       return res.status(401).json({ message: "Unauthorized", success: false });
     }

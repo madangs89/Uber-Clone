@@ -1,15 +1,49 @@
+import axios from "axios";
 import React from "react";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { UserDataContext } from "../context/userContext";
 const CaptainLogin = () => {
   const [email, setEmail] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
   const [password, setPassword] = React.useState("");
+  const navigate = useNavigate();
+  const { user, setUser } = React.useContext(UserDataContext);
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
-    console.log("Form submitted ✅");
-    console.log("Email:", email);
-    console.log("Password:", password);
+    setLoading(true);
+    try {
+      const data = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/captain/login`,
+        {
+          email,
+          password,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(data?.data.success);
+      console.log(data.data);
+
+      if (data?.data.success) {
+        setUser((prev) => {
+          return {
+            ...prev,
+            email: data.data.captain.email,
+            fullName: data.data.captain.fullName,
+          };
+        });
+        localStorage.setItem("token", data.data.token);
+        setLoading(false);
+        navigate("/captain-home");
+      }
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+      navigate("/captain-login");
+    }
   };
   return (
     <div className="p-7 h-screen flex flex-col justify-between">

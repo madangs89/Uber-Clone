@@ -41,7 +41,7 @@ export const registerUser = async (req, res) => {
       .status(201)
       .cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: false,
         sameSite: "lax",
       })
       .json({
@@ -84,7 +84,7 @@ export const loginUser = async (req, res) => {
       .status(200)
       .cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: false,
         sameSite: "lax",
       })
       .json({
@@ -125,7 +125,12 @@ export const getProfile = async (req, res) => {
     }
     return res
       .status(200)
-      .json({ message: "User profile fetched successfully", data });
+      .json({
+        message: "User profile fetched successfully",
+        data,
+        role: "user",
+        success: true,
+      });
   } catch (error) {
     return res.status(500).json({
       message: "Internal server error While Fetching User Profile",

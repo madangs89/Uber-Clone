@@ -1,5 +1,7 @@
+import axios from "axios";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { UserDataContext } from "../context/userContext";
 
 const CaptainSignup = () => {
   const [firstName, setFirstName] = React.useState("");
@@ -10,27 +12,55 @@ const CaptainSignup = () => {
   const [vehiclePlate, setVehiclePlate] = React.useState("");
   const [vehicleCapacity, setVehicleCapacity] = React.useState("");
   const [vehicleType, setVehicleType] = React.useState("");
-  const submitHandler = (e) => {
+  const [loading, setLoading] = React.useState(false);
+
+  const { user, setUser } = React.useContext(UserDataContext);
+
+  const navigate = useNavigate();
+  const submitHandler = async (e) => {
     e.preventDefault();
-    console.log("Form submitted ✅");
-    console.log("First Name:", firstName);
-    console.log("Last Name:", lastName);
-    console.log("Email:", email);
-    console.log("Password:", password);
-    console.log("Vehicle Color:", vehicleColor);
-    console.log("Vehicle Plate:", vehiclePlate);
-    console.log("Vehicle Capacity:", vehicleCapacity);
-    console.log("Vehicle Type:", vehicleType);
-    console.log(
-      firstName,
-      lastName,
-      email,
-      password,
-      vehicleColor,
-      vehiclePlate,
-      vehicleCapacity,
-      vehicleType
-    );
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/captain/register`,
+        {
+          fullName: {
+            firstName,
+            lastName,
+          },
+          email,
+          password,
+          vehicle: {
+            color: vehicleColor,
+            plate: vehiclePlate,
+            capacity: vehicleCapacity,
+            type: vehicleType,
+          },
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      if (response?.data?.success) {
+        setFirstName("");
+        setLastName("");
+        setEmail("");
+        setPassword("");
+        setUser((prev) => {
+          return {
+            ...prev,
+            email: response.data.captain.email,
+            fullName: response.data.captain.fullName,
+          };
+        });
+        localStorage.setItem("token", response.data.token);
+        navigate("/captain-home");
+      }
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
   };
   return (
     <div className="py-5 px-5 h-screen flex flex-col justify-between">
@@ -144,7 +174,7 @@ const CaptainSignup = () => {
               required
               className="bg-[#eeeeee] w-1/2 rounded-lg px-4 py-2 border text-lg placeholder:text-base"
               value={vehicleType}
-                name="vehicleType"
+              name="vehicleType"
               onChange={(e) => {
                 setVehicleType(e.target.value);
               }}
