@@ -22,3 +22,23 @@ export const getAddressCoordinates = async (address) => {
     throw new Error("Failed to get coordinates: " + error.message);
   }
 };
+
+export const getDistanceTime = async (origin, destination) => {
+  try {
+    if (!origin || !destination)
+      throw new Error("Origin and destination are required");
+    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin}&destinations=${destination}&key=${GOOGLE_MAPS_API_KEY}`; // Replace with your actual API key
+    const response = await axios.get(url);
+
+    if (response.data.status === "OK") {
+      if (response.data.rows[0].elements[0].status === "ZERO_RESULTS") {
+        throw new Error("No results found for the given address.");
+      }
+      return response.data.rows[0].elements[0];
+    } else {
+      throw new Error("No results found for the given address.");
+    }
+  } catch (error) {
+    throw new Error("Failed to get distance and time: " + error.message);
+  }
+};

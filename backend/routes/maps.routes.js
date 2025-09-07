@@ -1,6 +1,6 @@
 import express from "express";
 import { authMiddleware } from "../middlewares/auth.middelware.js";
-import { getCoordinates } from "../controlers/maps.controler.js";
+import { getCoordinates, getDistanceTimeForOriginAndDestination } from "../controlers/maps.controler.js";
 import { query } from "express-validator";
 import { validationResult } from "express-validator";
 
@@ -18,4 +18,21 @@ mapsRoutes.get(
   getCoordinates
 );
 
+mapsRoutes.get(
+  "/distance-time",
+  query("origin")
+    .isString()
+    .trim()
+    .isLength({ min: 1 })
+    .withMessage("Origin is required")
+    .escape(),
+  query("destination")
+    .isString()
+    .trim()
+    .isLength({ min: 1 })
+    .withMessage("Destination is required")
+    .escape(),
+  authMiddleware,
+  getDistanceTimeForOriginAndDestination
+);
 export default mapsRoutes;
