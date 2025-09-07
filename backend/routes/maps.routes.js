@@ -1,6 +1,10 @@
 import express from "express";
 import { authMiddleware } from "../middlewares/auth.middelware.js";
-import { getCoordinates, getDistanceTimeForOriginAndDestination } from "../controlers/maps.controler.js";
+import {
+  getAutoSuggestions,
+  getCoordinates,
+  getDistanceTimeForOriginAndDestination,
+} from "../controlers/maps.controler.js";
 import { query } from "express-validator";
 import { validationResult } from "express-validator";
 
@@ -34,5 +38,17 @@ mapsRoutes.get(
     .escape(),
   authMiddleware,
   getDistanceTimeForOriginAndDestination
+);
+
+mapsRoutes.get(
+  "/suggestions",
+  query("address")
+    .isString()
+    .trim()
+    .isLength({ min: 1 })
+    .withMessage("Address is required")
+    .escape(),
+  authMiddleware,
+  getAutoSuggestions
 );
 export default mapsRoutes;
